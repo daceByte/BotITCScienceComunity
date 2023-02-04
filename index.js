@@ -53,6 +53,12 @@ function start(wppClient) {
   });
 
   client.on("message", async (msg) => {
-    commandBot(client, msg, wppClient);
+    commandController.commandBot(client, msg, wppClient);
+  });
+
+  client.on("message_create", (msg) => {
+    if (msg.fromMe) {
+      console.log(msg._data.id._serialized);
+    }
   });
 }

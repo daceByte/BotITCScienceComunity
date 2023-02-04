@@ -25,10 +25,15 @@ async function commandBot(client, msg, wppClient) {
       case "#debug":
         await model.debugGroups(client, msg);
         break;
+      case "#poll":
+        await model.poll(wppClient, msg);
+        break;
 
       default:
-        if (msg.body.startsWith("#ban")) {
+        if (msg.body.startsWith("#ban ")) {
           await model.ban(client, msg);
+        } else if (msg.body.startsWith("#poll ")) {
+          await model.poll(wppClient, msg);
         }
         break;
     }

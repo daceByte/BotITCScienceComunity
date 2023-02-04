@@ -120,10 +120,24 @@ async function ban(msg) {
   }
 }
 
+async function poll(wppClient, msg) {
+  const groupId = require("../lib/groupId");
+  let data = msg.body.split("#poll ")[1];
+  data = data.split("/");
+  if (data.length >= 4) {
+    let options = [];
+    for (let i = 2; i < data.length; i++) {
+      options.push(data[i]);
+    }
+    wppClient.sendPollMessage(groupId(msg.from), data[1], options);
+  }
+}
+
 module.exports = {
   all,
   joke,
   debugGroups,
   debugComunity,
   ban,
+  poll,
 };
