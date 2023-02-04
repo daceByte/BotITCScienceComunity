@@ -1,0 +1,26 @@
+{
+  "name": "botITCScience",
+  "version": "1.0.0",
+  "description": "Bot administrativo de la comunidad ITCScience, este Bot está hecho para la administración completa de la comunidad www.itcscience.org.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daceByte/botITCScience.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/daceByte/botITCScience/issues"
+  },
+  "homepage": "https://github.com/daceByte/botITCScience#readme",
+  "dependencies": {
+    "@wppconnect-team/wppconnect": "^1.21.0",
+    "qrcode-terminal": "^0.12.0",
+    "whatsapp-web.js": "^1.19.3"
+  }
+}
