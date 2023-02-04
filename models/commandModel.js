@@ -129,7 +129,34 @@ async function poll(wppClient, msg) {
     for (let i = 2; i < data.length; i++) {
       options.push(data[i]);
     }
-    wppClient.sendPollMessage(groupId(msg.from), data[1], options);
+    wppClient.sendPollMessage(groupId(data[0]), data[1], options);
+  }
+}
+
+async function getVotes(wppClient, msg) {
+  const readData = require("../lib/readData.js");
+  const data = msg.body.split("#vote ")[1];
+  const poll = readData("./data/poll.json");
+  let pollId = "";
+  let content = [];
+  for (let i = 0; i < Object.keys(poll).length; i++) {
+    if (poll.idName == data) {
+      pollId = poll.msgId;
+      const Message = require("whatsapp-web.js/src/structures/Message");
+      let msgNew = new Message(poll.content);
+      break;
+    }
+  }
+
+  if (pollId != "") {
+    let votes = await wppClient.getVotes(pollId);
+    let dataInfo = msgNew.getInfo();
+    console.log(dataInfo);
+    console.log(votes);
+  } else {
+    msg.reply(
+      "El ID que envio no existe en la base de datos, por favor verifique el ID."
+    );
   }
 }
 
@@ -140,4 +167,5 @@ module.exports = {
   debugComunity,
   ban,
   poll,
+  getVotes,
 };

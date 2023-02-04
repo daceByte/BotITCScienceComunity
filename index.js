@@ -58,7 +58,13 @@ function start(wppClient) {
 
   client.on("message_create", (msg) => {
     if (msg.fromMe) {
-      console.log(msg._data.id._serialized);
+      if (msg.type == "poll_creation") {
+        const savePoll = require("./lib/savePoll");
+        msg.reply(
+          "Tu encuesta se ha enviado sastifactoriamente y se ha guardado con el ID " +
+            savePoll(msg._data.id._serialized, msg)
+        );
+      }
     }
   });
 }
