@@ -113,7 +113,7 @@ async function ban(msg) {
 
     if (ban && msg.body.split("@")[1] != "573028353043") {
       const chat = await msg.getChat();
-      chat.removeParticipants([msg.body.split("@")[1] + "@c.us"]);
+      await chat.removeParticipants([msg.body.split("@")[1] + "@c.us"]);
     } else {
       msg.react("❌");
     }
@@ -133,26 +133,84 @@ async function poll(wppClient, msg) {
   }
 }
 
-async function getVotes(wppClient, msg) {
-  const readData = require("../lib/readData.js");
-  const data = msg.body.split("#vote ")[1];
-  const poll = readData("./data/poll.json");
-  let pollId = "";
-  let content = [];
+async function getVotes(client, wppClient, msg) {
+  const readData = require("../lib/readData.js"),
+    poll = readData("./data/poll.json"),
+    { Message } = require("whatsapp-web.js/src/structures");
+  let pollId = "",
+    msgNew = msg;
   for (let i = 0; i < Object.keys(poll).length; i++) {
-    if (poll.idName == data) {
-      pollId = poll.msgId;
-      const Message = require("whatsapp-web.js/src/structures/Message");
-      let msgNew = new Message(poll.content);
+    if (poll[i].idName == msg.body.split("#vote ")[1]) {
+      pollId = poll[i].msgId;
+      msgNew = new Message(client, poll[i].content);
       break;
     }
   }
 
-  if (pollId != "") {
-    let votes = await wppClient.getVotes(pollId);
-    let dataInfo = msgNew.getInfo();
-    console.log(dataInfo);
-    console.log(votes);
+  if (pollId != "" && msgNew != null) {
+    let votes = await wppClient.getVotes(pollId),
+      dataInfo = await msgNew.getInfo();
+    let countRead = Object.keys(dataInfo.read).length,
+      countVotes = Object.keys(votes.votes).length;
+    msg.reply(
+      "📊 ENCUESTA ID #" +
+        msg.body.split("#vote ")[1] +
+        "\nEsta encuesta a sido vista por " +
+        countRead +
+        " personas y ha obtenido " +
+        countVotes +
+        " votos en total. Si desea purgar los usuarios usar #purge ID"
+    );
+  } else {
+    msg.reply(
+      "El ID que envio no existe en la base de datos, por favor verifique el ID."
+    );
+  }
+}
+
+async function purgeVotes(client, wppClient, msg) {
+  const readData = require("../lib/readData.js"),
+    poll = readData("./data/poll.json"),
+    { Message } = require("whatsapp-web.js/src/structures");
+  let pollId = "",
+    msgNew = msg;
+  for (let i = 0; i < Object.keys(poll).length; i++) {
+    if (poll[i].idName == msg.body.split("#purge ")[1]) {
+      pollId = poll[i].msgId;
+      msgNew = new Message(client, poll[i].content);
+      break;
+    }
+  }
+
+  if (pollId != "" && msgNew != null) {
+    let votes = await wppClient.getVotes(pollId),
+      dataInfo = await msgNew.getInfo(),
+      countUser = 0;
+
+    for (let i = 0; i < Object.keys(dataInfo.read).length; i++) {
+      let ban = true;
+      for (let o = 0; o < Object.keys(votes.votes).length; o++) {
+        if (
+          dataInfo.read[i].id._serialized == votes.votes[i].sender._serialized
+        ) {
+          ban = false;
+          break;
+        }
+      }
+
+      if (ban == true) {
+        const chat = await msgNew.getChat();
+        await chat.removeParticipants([dataInfo[i].id._serialized]);
+        countUser++;
+      }
+    }
+    msg.reply(
+      "📊 ENCUESTA ID #" +
+        msg.body.split("#purge ")[1] +
+        " Fueron baneadas " +
+        countUser +
+        " personas."
+    );
   } else {
     msg.reply(
       "El ID que envio no existe en la base de datos, por favor verifique el ID."
@@ -168,4 +226,5 @@ module.exports = {
   ban,
   poll,
   getVotes,
+  purgeVotes,
 };

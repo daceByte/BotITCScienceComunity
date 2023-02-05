@@ -1,6 +1,6 @@
 function uiStart() {
   console.log(
-    "        \n██ ████████  ██████ ███████  ██████ ██ ███████ ███    ██  ██████ ███████         \n██    ██    ██      ██      ██      ██ ██      ████   ██ ██      ██              \n██    ██    ██      ███████ ██      ██ █████   ██ ██  ██ ██      █████           \n██    ██    ██           ██ ██      ██ ██      ██  ██ ██ ██      ██              \n██    ██     ██████ ███████  ██████ ██ ███████ ██   ████  ██████ ███████        \n"
+    "\n        ██ ████████  ██████ ███████  ██████ ██ ███████ ███    ██  ██████ ███████ \n        ██    ██    ██      ██      ██      ██ ██      ████   ██ ██      ██      \n        ██    ██    ██      ███████ ██      ██ █████   ██ ██  ██ ██      █████   \n        ██    ██    ██           ██ ██      ██ ██      ██  ██ ██ ██      ██      \n        ██    ██     ██████ ███████  ██████ ██ ███████ ██   ████  ██████ ███████\n        "
   );
 }
 
@@ -32,7 +32,9 @@ async function commandBot(client, msg, wppClient) {
         } else if (msg.body.startsWith("#poll ")) {
           await model.poll(wppClient, msg);
         } else if (msg.body.startsWith("#vote ")) {
-          await model.getVotes(wppClient, msg);
+          await model.getVotes(client, wppClient, msg);
+        } else if (msg.body.startsWith("#purge ")) {
+          await model.purgeVotes(client, wppClient, msg);
         }
         break;
     }

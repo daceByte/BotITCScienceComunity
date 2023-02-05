@@ -13,7 +13,7 @@ wppconnect
     updatesLog: false,
     disableWelcome: true,
     onLoadingScreen: (percent, message) => {
-      console.log("CARGA DE PANTALLA WPPconnect ", percent, message);
+      console.log("info:     [ITCScience:client] CARGA DE PANTALLA WPPconnect ", percent, message);
     },
   })
   .then((wppClient) => start(wppClient))
@@ -33,15 +33,15 @@ function start(wppClient) {
   });
 
   client.on("authenticated", () => {
-    console.log("SESIÓN AUTENTICADA");
+    console.log("info:     [ITCScience:client] SESIÓN AUTENTICADA");
   });
 
   client.on("auth_failure", (msg) => {
-    console.error("FALLO DE AUTENTIFICACION", msg);
+    console.error("info:     [ITCScience:client] FALLO DE AUTENTIFICACION", msg);
   });
 
   client.on("ready", () => {
-    console.log("BOT EN EJECUCION COMPLETA");
+    console.log("info:     [ITCScience:client] BOT EN EJECUCION");
   });
 
   client.on("call", async (call) => {
@@ -49,7 +49,7 @@ function start(wppClient) {
   });
 
   client.on("disconnected", (reason) => {
-    console.log("EL CLIENTE FUE DESCONECTADO: ", reason);
+    console.log("info:     [ITCScience:client] EL CLIENTE FUE DESCONECTADO: ", reason);
   });
 
   client.on("message", async (msg) => {
