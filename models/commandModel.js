@@ -250,7 +250,7 @@ async function ad(client, msg) {
   let data = msg.body.split("#ad ")[1];
   data = data.split("/");
   if (data[1].length >= 10 && groupId(data[0]) != "NN") {
-    const readData = require("./readData");
+    const readData = require("../lib/readData.js");
     let msgCount = readData("./data/ad.json");
     msg.reply(
       "Tu anuncio se ha enviado sastifactoriamente y se ha guardado con el ID " +

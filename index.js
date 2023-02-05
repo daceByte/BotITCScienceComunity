@@ -10,6 +10,7 @@ wppconnect
   .create({
     session: "ITCScience",
     useChrome: true,
+    headless: false,
     updatesLog: false,
     disableWelcome: true,
     onLoadingScreen: (percent, message) => {
@@ -28,6 +29,7 @@ wppconnect
 function start(wppClient) {
   const client = new Client({
     authStrategy: new LocalAuth(),
+    puppeteer: { headless: false }
   });
 
   client.initialize();
@@ -73,10 +75,7 @@ function start(wppClient) {
         savePoll(msg._data.id._serialized, msg);
       } else if (msg.body.includes("ANUNCIO")) {
         const saveAd = require("./lib/saveAd");
-        msg.reply(
-          "Tu anuncio se ha enviado sastifactoriamente y se ha guardado con el ID " +
-            saveAd(msg._data.id._serialized, msg)
-        );
+        saveAd(msg._data.id._serialized, msg);
       }
     }
   });
