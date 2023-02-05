@@ -130,7 +130,7 @@ async function poll(wppClient, msg) {
       options.push(data[i]);
     }
     if (groupId(data[0] != "NN")) {
-      const readData = require("./readData");
+      const readData = require("../lib/readData.js");
       let msgCount = readData("./data/poll.json");
       msg.reply(
         "Tu encuesta se ha enviado sastifactoriamente y se ha guardado con el ID " +
@@ -161,9 +161,14 @@ async function getVotes(client, wppClient, msg) {
   }
 
   if (pollId != "" && msgNew != null) {
-    let votes = await wppClient.getVotes(pollId),
-      dataInfo = await msgNew.getInfo();
-    console.log(dataInfo);
+    const chatTrash = await msgNew.getChat();
+    const dataTrash = await chatTrash.fetchMessages({
+      limit: 100,
+      fromMe: true,
+    });
+    let votes = await wppClient.getVotes(pollId);
+    let dataInfo = await msgNew.getInfo();
+
     let countRead = Object.keys(dataInfo.read).length,
       countVotes = Object.keys(votes.votes).length;
     msg.reply(
@@ -197,6 +202,11 @@ async function purgeVotes(client, wppClient, msg) {
   }
 
   if (pollId != "" && msgNew != null) {
+    const chatTrash = await msgNew.getChat();
+    const dataTrash = await chatTrash.fetchMessages({
+      limit: 100,
+      fromMe: true,
+    });
     let votes = await wppClient.getVotes(pollId),
       dataInfo = await msgNew.getInfo(),
       countUser = 0;
