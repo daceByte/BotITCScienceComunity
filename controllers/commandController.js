@@ -25,6 +25,9 @@ async function commandBot(client, msg, wppClient) {
       case "#debug":
         await model.debugGroups(client, msg);
         break;
+      case "#chats":
+        console.log(await client.getChats());
+        break;
 
       default:
         if (msg.body.startsWith("#ban ")) {
@@ -35,6 +38,8 @@ async function commandBot(client, msg, wppClient) {
           await model.getVotes(client, wppClient, msg);
         } else if (msg.body.startsWith("#purge ")) {
           await model.purgeVotes(client, wppClient, msg);
+        } else if (msg.body.startsWith("#ad ")) {
+          await model.ad(client, msg);
         }
         break;
     }

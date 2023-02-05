@@ -129,7 +129,13 @@ async function poll(wppClient, msg) {
     for (let i = 2; i < data.length; i++) {
       options.push(data[i]);
     }
-    wppClient.sendPollMessage(groupId(data[0]), data[1], options);
+    if (groupId(data[0] != "NN")) {
+      wppClient.sendPollMessage(groupId(data[0]), data[1], options);
+    } else {
+      msg.reply(
+        "El grupo al cual deseas enviar no existe o la estructura de la encuesta no es correcta, corrija e intente de nuevo."
+      );
+    }
   }
 }
 
@@ -218,6 +224,22 @@ async function purgeVotes(client, wppClient, msg) {
   }
 }
 
+async function ad(client, msg) {
+  const groupId = require("../lib/groupId");
+  let data = msg.body.split("#ad ")[1];
+  data = data.split("/");
+  if (data[1].length >= 10 && groupId(data[0]) != "NN") {
+    client.sendMessage(
+      groupId(data[0]),
+      "📣 ANUNCIO - ITCScience 📣\n" + data[1]
+    );
+  } else {
+    msg.reply(
+      "El grupo al cual deseas enviar no existe o su mensaje es muy corto, corrija e intente de nuevo."
+    );
+  }
+}
+
 module.exports = {
   all,
   joke,
@@ -227,4 +249,5 @@ module.exports = {
   poll,
   getVotes,
   purgeVotes,
+  ad,
 };

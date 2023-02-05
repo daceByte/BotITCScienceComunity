@@ -64,6 +64,12 @@ function start(wppClient) {
           "Tu encuesta se ha enviado sastifactoriamente y se ha guardado con el ID " +
             savePoll(msg._data.id._serialized, msg)
         );
+      }else if((msg.body).includes('ANUNCIO')){
+        const saveAd = require("./lib/saveAd");
+        msg.reply(
+          "Tu anuncio se ha enviado sastifactoriamente y se ha guardado con el ID " +
+            saveAd(msg._data.id._serialized, msg)
+        );
       }
     }
   });
