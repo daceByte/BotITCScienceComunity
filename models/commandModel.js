@@ -163,6 +163,7 @@ async function getVotes(client, wppClient, msg) {
   if (pollId != "" && msgNew != null) {
     let votes = await wppClient.getVotes(pollId),
       dataInfo = await msgNew.getInfo();
+    console.log(dataInfo);
     let countRead = Object.keys(dataInfo.read).length,
       countVotes = Object.keys(votes.votes).length;
     msg.reply(
