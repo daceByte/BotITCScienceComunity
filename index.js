@@ -13,7 +13,11 @@ wppconnect
     updatesLog: false,
     disableWelcome: true,
     onLoadingScreen: (percent, message) => {
-      console.log("info:     [ITCScience:client] CARGA DE PANTALLA WPPconnect ", percent, message);
+      console.log(
+        "info:     [ITCScience:client] CARGA DE PANTALLA WPPconnect ",
+        percent,
+        message
+      );
     },
   })
   .then((wppClient) => start(wppClient))
@@ -37,7 +41,10 @@ function start(wppClient) {
   });
 
   client.on("auth_failure", (msg) => {
-    console.error("info:     [ITCScience:client] FALLO DE AUTENTIFICACION", msg);
+    console.error(
+      "info:     [ITCScience:client] FALLO DE AUTENTIFICACION",
+      msg
+    );
   });
 
   client.on("ready", () => {
@@ -49,7 +56,10 @@ function start(wppClient) {
   });
 
   client.on("disconnected", (reason) => {
-    console.log("info:     [ITCScience:client] EL CLIENTE FUE DESCONECTADO: ", reason);
+    console.log(
+      "info:     [ITCScience:client] EL CLIENTE FUE DESCONECTADO: ",
+      reason
+    );
   });
 
   client.on("message", async (msg) => {
@@ -60,11 +70,8 @@ function start(wppClient) {
     if (msg.fromMe) {
       if (msg.type == "poll_creation") {
         const savePoll = require("./lib/savePoll");
-        msg.reply(
-          "Tu encuesta se ha enviado sastifactoriamente y se ha guardado con el ID " +
-            savePoll(msg._data.id._serialized, msg)
-        );
-      }else if((msg.body).includes('ANUNCIO')){
+        savePoll(msg._data.id._serialized, msg);
+      } else if (msg.body.includes("ANUNCIO")) {
         const saveAd = require("./lib/saveAd");
         msg.reply(
           "Tu anuncio se ha enviado sastifactoriamente y se ha guardado con el ID " +

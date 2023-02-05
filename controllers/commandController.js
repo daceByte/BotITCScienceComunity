@@ -25,8 +25,11 @@ async function commandBot(client, msg, wppClient) {
       case "#debug":
         await model.debugGroups(client, msg);
         break;
-      case "#chats":
-        console.log(await client.getChats());
+      case "#menu":
+        await model.menu(client, msg);
+        break;
+      case "#group":
+        await model.group(client, msg);
         break;
 
       default:
