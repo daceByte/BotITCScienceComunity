@@ -10,7 +10,6 @@ wppconnect
   .create({
     session: "ITCScience",
     useChrome: true,
-    headless: false,
     updatesLog: false,
     disableWelcome: true,
     onLoadingScreen: (percent, message) => {
@@ -29,7 +28,6 @@ wppconnect
 function start(wppClient) {
   const client = new Client({
     authStrategy: new LocalAuth(),
-    puppeteer: { headless: false }
   });
 
   client.initialize();
