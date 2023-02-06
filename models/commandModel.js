@@ -134,8 +134,7 @@ async function poll(wppClient, msg) {
       let msgCount = readData("./data/poll.json");
       msg.reply(
         "Tu encuesta se ha enviado sastifactoriamente y se ha guardado con el ID " +
-          Object.keys(msgCount).length +
-          1
+          (Object.keys(msgCount).length + 1)
       );
       wppClient.sendPollMessage(groupId(data[0]), data[1], options);
     } else {
@@ -254,8 +253,7 @@ async function ad(client, msg) {
     let msgCount = readData("./data/ad.json");
     msg.reply(
       "Tu anuncio se ha enviado sastifactoriamente y se ha guardado con el ID " +
-        Object.keys(msgCount).length +
-        1
+        (Object.keys(msgCount).length + 1)
     );
     client.sendMessage(
       groupId(data[0]),
