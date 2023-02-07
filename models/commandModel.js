@@ -225,10 +225,7 @@ async function purgeVotes(client, wppClient, msg) {
         const chat = await msgNew.getChat();
         const isWheel = require("../lib/wheel");
         if (isWheel(dataInfo.read[i].id._serialized) != true) {
-          await wppClient.removeParticipant(
-            chat.id,
-            dataInfo.read[i].id._serialized
-          );
+          await chat.removeParticipants([dataInfo.read[i].id._serialized]);
           countUser++;
         }
       }
