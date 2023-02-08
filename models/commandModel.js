@@ -107,7 +107,7 @@ async function ban(msg) {
   const isWheel = require("../lib/wheel");
   if (msg.body.includes("@")) {
     let ban = true;
-    if (isWheel(msg.author)) {
+    if (isWheel(msg.body.split("@")[1])) {
       ban = false;
     }
 
@@ -189,9 +189,13 @@ async function getVotes(client, wppClient, msg) {
 async function purgeVotes(client, wppClient, msg) {
   const readData = require("../lib/readData.js"),
     poll = readData("./data/poll.json"),
-    { Message } = require("whatsapp-web.js/src/structures");
+    { Message } = require("whatsapp-web.js/src/structures"),
+    isWheel = require("../lib/wheel"),
+    savePollBan = require("../lib/savePollBan");
   let pollId = "",
-    msgNew = msg;
+    msgNew = msg,
+    dataPollBanned = [];
+
   for (let i = 0; i < Object.keys(poll).length; i++) {
     if (poll[i].idName == msg.body.split("#purge ")[1]) {
       pollId = poll[i].msgId;
@@ -214,7 +218,9 @@ async function purgeVotes(client, wppClient, msg) {
       let ban = true;
       for (let o = 0; o < Object.keys(votes.votes).length; o++) {
         if (
-          dataInfo.read[i].id._serialized == votes.votes[o].sender._serialized
+          dataInfo.read[i].id._serialized ==
+            votes.votes[o].sender._serialized &&
+          Object.keys(votes.votes[o].selectedOptions).length != 0
         ) {
           ban = false;
           break;
@@ -222,14 +228,24 @@ async function purgeVotes(client, wppClient, msg) {
       }
 
       if (ban == true) {
-        const chat = await msgNew.getChat();
-        const isWheel = require("../lib/wheel");
-        if (isWheel(dataInfo.read[i].id._serialized) != true) {
-          await chat.removeParticipants([dataInfo.read[i].id._serialized]);
+        let ax = await searchMembersGroup(
+          chatTrash.id,
+          dataInfo.read[i].id._serialized,
+          wppClient
+        );
+        if (isWheel(dataInfo.read[i].id._serialized) == false && ax == true) {
+          dataPollBanned.push(dataInfo.read[i].id._serialized);
+          await chatTrash.removeParticipants([dataInfo.read[i].id._serialized]);
+          wait(3);
           countUser++;
         }
       }
     }
+
+    if (dataPollBanned.length != 0) {
+      savePollBan(dataPollBanned);
+    }
+
     msg.reply(
       "📊 ENCUESTA ID #" +
         msg.body.split("#purge ")[1] +
@@ -242,6 +258,24 @@ async function purgeVotes(client, wppClient, msg) {
       "El ID que envio no existe en la base de datos, por favor verifique el ID."
     );
   }
+}
+
+function wait(espera_segundos) {
+  espera = espera_segundos * 1000;
+  const tiempo_inicio = Date.now();
+  let tiempo_actual = null;
+  do {
+    tiempo_actual = Date.now();
+  } while (tiempo_actual - tiempo_inicio < espera);
+}
+
+async function searchMembersGroup(id, number, wppClient) {
+  const info = await wppClient.getGroupMembersIds(id);
+  let temp = [];
+  for (let i = 0; i < info.length; i++) {
+    temp.push(info[i]._serialized);
+  }
+  return temp.includes(number);
 }
 
 async function ad(client, msg) {

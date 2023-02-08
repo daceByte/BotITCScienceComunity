@@ -31,10 +31,13 @@ async function commandBot(client, msg, wppClient) {
       case "#group":
         await model.group(client, msg);
         break;
+      case "#chats":
+        console.log(await wppClient.getAllChats());
+        break;
 
       default:
-        if (msg.body.startsWith("#ban ")) {
-          await model.ban(client, msg);
+        if (msg.body.startsWith("#ban")) {
+          await model.ban(msg);
         } else if (msg.body.startsWith("#poll ")) {
           await model.poll(wppClient, msg);
         } else if (msg.body.startsWith("#vote ")) {
