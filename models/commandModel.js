@@ -169,10 +169,12 @@ async function getVotes(client, wppClient, msg) {
     let dataInfo = await msgNew.getInfo();
 
     let countRead = Object.keys(dataInfo.read).length,
-      countVotes = Object.keys(votes.votes).length;
+      countVotes = 0;
 
     for (let i = 0; i < Object.keys(votes.votes).length; i++) {
-      const element = array[i];
+      if (Object.keys(votes.votes[i].selectedOptions).length != 0) {
+        countVotes++;
+      }
     }
     msg.reply(
       "📊 ENCUESTA ID #" +
