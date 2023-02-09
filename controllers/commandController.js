@@ -1,10 +1,23 @@
+/**
+ * Imprime un anuncio de la comunidad con caracteres ascii.
+ *
+ */
 function uiStart() {
   console.log(
     "\n        ██ ████████  ██████ ███████  ██████ ██ ███████ ███    ██  ██████ ███████ \n        ██    ██    ██      ██      ██      ██ ██      ████   ██ ██      ██      \n        ██    ██    ██      ███████ ██      ██ █████   ██ ██  ██ ██      █████   \n        ██    ██    ██           ██ ██      ██ ██      ██  ██ ██ ██      ██      \n        ██    ██     ██████ ███████  ██████ ██ ███████ ██   ████  ██████ ███████\n        "
   );
 }
 
-async function commandBot(client, msg, wppClient) {
+/**
+ * Recibe el mensaje y comprueba que sea de un wheel para luego comprobar que es un comando,
+ * que contenga el formato correcto, cuando se comprueba que es un comando llama al modelo,
+ * y ejecuta la accion del comando.
+ *
+ * @param {client} [client]
+ * @param {Message} [msg]
+ * @param {wppClient} [wppClient]
+ */
+async function commandBot(client, msg, wppClient) { 
   const model = require("../models/commandModel");
   const isWheel = require("../lib/wheel");
   if (isWheel(msg.author)) {

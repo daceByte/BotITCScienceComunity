@@ -1,3 +1,9 @@
+/**
+ * Recibe el mensaje y obtiene el chat para luego enviar un mensaje,
+ * con todos los integrantes mencionados.
+ *
+ * @param {Message} [msg]
+ */
 async function all(msg) {
   const chat = await msg.getChat();
   let number = "";
@@ -9,6 +15,11 @@ async function all(msg) {
   });
 }
 
+/**
+ * Recibe el mensaje y obtiene el chat de la conversacion para luego enviar un chiste.
+ *
+ * @param {Message} [msg]
+ */
 async function joke(msg) {
   const readData = require("../lib/readData.js");
   let joke = readData("./data/joke.json");
@@ -16,6 +27,14 @@ async function joke(msg) {
   msg.reply(joke[getRandomInt(Object.keys(joke).length)]);
 }
 
+/**
+ * Recibe el cliente y el mensaje, para luego revisar que integrantes hacen parte de la comunidad
+ * y cuales no, en caso de que no se elimina del grupo difusion ya que el usuario solo se encuentra
+ * en este grupo.
+ *
+ * @param {Message} [msg]
+ * @param {client} [client]
+ */
 async function debugComunity(client, msg) {
   const readData = require("../lib/readData.js"),
     chats = await client.getChats();
@@ -60,6 +79,14 @@ async function debugComunity(client, msg) {
   );
 }
 
+/**
+ * Recibe el cliente y el mensaje, para luego revisar que integrantes estan en los grupos pero no estan
+ * en la lista de difusion.
+ *
+ *
+ * @param {Message} [msg]
+ * @param {client} [client]
+ */
 async function debugGroups(client, msg) {
   const readData = require("../lib/readData.js");
 
@@ -103,6 +130,12 @@ async function debugGroups(client, msg) {
   msg.reply("Tarea terminada, la depuracion ha sido completada.");
 }
 
+/**
+ * Recibe un mensaje, el cual se analiza para saber si tiene una mencion, en caso de tener
+ * se usa esa mencion para banear al usuario.
+ *
+ * @param {Message} [msg]
+ */
 async function ban(msg) {
   const isWheel = require("../lib/wheel");
   if (msg.body.includes("@")) {
@@ -120,6 +153,14 @@ async function ban(msg) {
   }
 }
 
+/**
+ * Recibe el cliente de la api dos y un mensaje para luego revisar la estructura
+ * del mensaje y obtener los datos ideales para una encuesta, de ahi
+ * la encuesta se crea y envia por la api 2.
+ *
+ * @param {wppClient} [wppClient]
+ * @param {Message} [msg]
+ */
 async function poll(wppClient, msg) {
   const groupId = require("../lib/groupId");
   let data = msg.body.split("#poll ")[1];
@@ -192,6 +233,10 @@ async function getVotes(client, wppClient, msg) {
   }
 }
 
+/**
+ * Esta funcion purga los votos segun la gente que vio el mensaje, comando con error.
+ *
+ */
 async function purgeVotes(client, wppClient, msg) {
   const readData = require("../lib/readData.js"),
     poll = readData("./data/poll.json"),
@@ -217,16 +262,16 @@ async function purgeVotes(client, wppClient, msg) {
       countUser = 0, //Declaracion del contador de usaurios baneados.
       ban = true; //Declaracion de ban.
 
-    console.log(votes.votes);
-    console.log(dataInfo.read);
+    console.log(votes.votes);//Imprime los votos
+    console.log(dataInfo.read);//Imprime la gente que vio el mensaje
 
     for (let i = 0; i < Object.keys(dataInfo.read).length; i++) {
       ban = true;
       for (let o = 0; o < Object.keys(votes.votes).length; o++) {
         if (
           dataInfo.read[i].id._serialized ==
-            votes.votes[o].sender._serialized &&
-          Object.keys(votes.votes[o].selectedOptions).length != 0
+            votes.votes[o].sender._serialized && // comprueba si el que vio el mensaje voto.
+          Object.keys(votes.votes[o].selectedOptions).length != 0 // COmprueba cuantos votos hizo
         ) {
           console.log(
             dataInfo.read[i].id._serialized +
@@ -241,7 +286,7 @@ async function purgeVotes(client, wppClient, msg) {
       }
 
       if (ban == true) {
-        let ax = await searchMembersGroup(
+        let ax = await searchMembersGroup( 
           chatPoll.id,
           dataInfo.read[i].id._serialized,
           wppClient
@@ -269,6 +314,11 @@ async function purgeVotes(client, wppClient, msg) {
   }
 }
 
+/**
+ * Funcion que retiene el tiempo de ejecucion segun la cantidad de segundos que recibe por parametro.
+ *
+ * @param {int} [espera_segundos]
+ */
 function wait(espera_segundos) {
   espera = espera_segundos * 1000;
   const tiempo_inicio = Date.now();
@@ -278,6 +328,14 @@ function wait(espera_segundos) {
   } while (tiempo_actual - tiempo_inicio < espera);
 }
 
+/**
+ * Con el id de un grupo obtiene los participantes para luego comprobar
+ * si el numero esta dentro de esa lista.
+ *
+ * @param {string} [id]
+ * @param {string} [number]
+ * @param {wppClient} [wppClient]
+ */
 async function searchMembersGroup(id, number, wppClient) {
   const info = await wppClient.getGroupMembersIds(id);
   let temp = [];
@@ -309,12 +367,24 @@ async function ad(client, msg) {
   }
 }
 
+/**
+ * Envia el menu al chat del usuario que solicito el menu.
+ *
+ * @param {Message} [msg]
+ * @param {client} [client]
+ */
 async function menu(client, msg) {
   const menuMsg =
     "BOT ITCScience \n\nComandos del bot.\nTodo comando inicia con un #, estos comandos solo los pueden usar los wheels.\n\n#joke -Envia un chiste.\n#all -Menciona a todos los integrantes del grupo.\n#off -Apaga el bot en modo seguro.\n#debugc -Hace una purga de los integrantes del grupo de difusion.\n#debug -Hace una purga de los integrantes de cada grupo.\n#ban @mencion -Banea al integrante mencionado.\n#poll destino/titulo/opcion1/opcion2 -Envia una encuesta al grupo destino introducido.\n#vote ID -Obtiene unas estadisticas de como va la encuesta.\n#purge ID -Purga a todos los integrantes que miraron la encuesta pero no votaron.\n#ad destino/mensaje. -Envia un mensaje tipo anuncio al grupo destino.\n#group -Envia la lista de los grupos destinos y como se deben escribir.\n\nBOT ITCScience Version 1.0.9";
   client.sendMessage(msg.author, menuMsg);
 }
 
+/**
+ * Envia la lista de los grupo registrados y el nombre para acceder a ellos.
+ *
+ * @param {Message} [msg]
+ * @param {client} [client]
+ */
 async function group(client, msg) {
   const groupMsg =
     "BOT ITCScience \n\nLista de grupos.\nfreeDucks\nitLinux\nwheels\nprogramadores101\nencuestasprogramadores\ncienciasComputacionales\ncontrol\n\nDebe escribir el grupo destino respetando las mayusculas y minusculas.";
