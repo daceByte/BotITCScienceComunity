@@ -230,14 +230,26 @@ async function purgeVotes(client, wppClient, msg) {
         ) {
           ban = false;
           break;
+        } else {
+          console.log(
+            dataInfo.read[i].id._serialized +
+              " == " +
+              votes.votes[o].sender._serialized +
+              " == " +
+              Object.keys(votes.votes[o].selectedOptions).length
+          );
         }
       }
 
       if (ban == true) {
-        let ax = await searchMembersGroup(chatPoll.id,dataInfo.read[i].id._serialized,wppClient); // Buscar si esta el usuario en el grupo.
-        if (!isWheel(dataInfo.read[i].id._serialized)&& ax) {
+        let ax = await searchMembersGroup(
+          chatPoll.id,
+          dataInfo.read[i].id._serialized,
+          wppClient
+        ); // Buscar si esta el usuario en el grupo.
+        if (!isWheel(dataInfo.read[i].id._serialized) && ax) {
           //await chatPoll.removeParticipants([dataInfo.read[i].id._serialized]);
-          console.log("Usuario: "+dataInfo.read[i].id._serialized);
+          console.log("Usuario: " + dataInfo.read[i].id._serialized);
           wait(3);
           countUser++;
         }
