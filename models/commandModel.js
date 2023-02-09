@@ -196,32 +196,32 @@ async function purgeVotes(client, wppClient, msg) {
   const readData = require("../lib/readData.js"),
     poll = readData("./data/poll.json"),
     { Message } = require("whatsapp-web.js/src/structures"),
-    isWheel = require("../lib/wheel"),
-    savePollBan = require("../lib/savePollBan");
-  let pollId = "",
-    msgNew = msg,
-    dataPollBanned = [];
+    isWheel = require("../lib/wheel");
+
+  let pollId = "", // ID de la encuesta
+    msgNew = msg; // Declaracion de una variable tipo mensaje
 
   for (let i = 0; i < Object.keys(poll).length; i++) {
     if (poll[i].idName == msg.body.split("#purge ")[1]) {
-      pollId = poll[i].msgId;
-      msgNew = new Message(client, poll[i].content);
+      pollId = poll[i].msgId; // Id de la encuesta
+      msgNew = new Message(client, poll[i].content); //Recreacion del mensaje de la encuesta.
       break;
     }
   }
 
-  if (pollId != "" && msgNew != null) {
-    const chatTrash = await msgNew.getChat();
-    const dataTrash = await chatTrash.fetchMessages({
-      limit: 100,
-      fromMe: true,
-    });
-    let votes = await wppClient.getVotes(pollId),
-      dataInfo = await msgNew.getInfo(),
-      countUser = 0;
+  if (pollId != "" && msgNew != msg) {
+    const chatPoll = await msgNew.getChat(); //Chat donde se envio la encuesta.,
+    dataTrash = await chatPoll.fetchMessages({ limit: 100, fromMe: true }); // Cargar 100 mensajes del chat de la encuesta.
+    let votes = await wppClient.getVotes(pollId), //Obtiene todos los votos de la encuesta.
+      dataInfo = await msgNew.getInfo(), //Obtiene todos los usuarios que vieron el mensaje.
+      countUser = 0, //Declaracion del contador de usaurios baneados.
+      ban = true; //Declaracion de ban.
+
+    console.log(votes.votes);
+    console.log(dataInfo.read);
 
     for (let i = 0; i < Object.keys(dataInfo.read).length; i++) {
-      let ban = true;
+      ban = true;
       for (let o = 0; o < Object.keys(votes.votes).length; o++) {
         if (
           dataInfo.read[i].id._serialized ==
@@ -234,22 +234,14 @@ async function purgeVotes(client, wppClient, msg) {
       }
 
       if (ban == true) {
-        let ax = await searchMembersGroup(
-          chatTrash.id,
-          dataInfo.read[i].id._serialized,
-          wppClient
-        );
-        if (isWheel(dataInfo.read[i].id._serialized) == false && ax == true) {
-          dataPollBanned.push(dataInfo.read[i].id._serialized);
-          await chatTrash.removeParticipants([dataInfo.read[i].id._serialized]);
+        let ax = await searchMembersGroup(chatPoll.id,dataInfo.read[i].id._serialized,wppClient); // Buscar si esta el usuario en el grupo.
+        if (!isWheel(dataInfo.read[i].id._serialized)&& ax) {
+          //await chatPoll.removeParticipants([dataInfo.read[i].id._serialized]);
+          console.log("Usuario: "+dataInfo.read[i].id._serialized);
           wait(3);
           countUser++;
         }
       }
-    }
-
-    if (dataPollBanned.length != 0) {
-      savePollBan(dataPollBanned);
     }
 
     msg.reply(
