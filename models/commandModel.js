@@ -228,9 +228,6 @@ async function purgeVotes(client, wppClient, msg) {
             votes.votes[o].sender._serialized &&
           Object.keys(votes.votes[o].selectedOptions).length != 0
         ) {
-          ban = false;
-          break;
-        } else {
           console.log(
             dataInfo.read[i].id._serialized +
               " == " +
@@ -238,6 +235,8 @@ async function purgeVotes(client, wppClient, msg) {
               " == " +
               Object.keys(votes.votes[o].selectedOptions).length
           );
+          ban = false;
+          break;
         }
       }
 
