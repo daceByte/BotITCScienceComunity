@@ -1,3 +1,5 @@
-node_modules
-tokens
-.wwebjs_auth
+error.dace
+error.log
+combined.log
+node_modules/
+tokens/
