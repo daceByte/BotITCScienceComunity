@@ -1,4 +1,5 @@
 const command = {}
+const fs = require('fs');
 
 /*
     Funcion donde inicializa evento, 
@@ -32,8 +33,15 @@ command.start = async (client) => {
                         await command.debug(client, msg);
                         await command.verify(client, msg);
                         break;
+                    case "!ver5":
+                    case "!verify5":
+                        await command.filter(client, msg);
+                        break;
                     case "!bantotal":
                         await command.banTotal(client, msg);
+                        break;
+                    case "!joke":
+                        await command.sendJoke(client, msg);
                         break;
                 }
             }
@@ -41,6 +49,34 @@ command.start = async (client) => {
             command.addLogError(e);
         }
     });
+}
+
+command.sendJoke=async(client, msg)=>{
+    fs.readFile("bd/joke.dace", 'utf8', async (err, data) => {
+        if (err) {
+            console.error('Error al leer el archivo:', err);
+        return;
+    }
+        const lineas = data.split('\n');
+        const lineasArray = lineas.map((linea) => linea.trim()); 
+        await client.sendText(msg.id._serialized, lineasArray[0]);
+    });
+}
+
+command.filter = async (client, msg) => {
+    const difusion = mixArrays(await client.getGroupMembersIds('120363025112889144@g.us'), []);
+    const filtro = mixArrays(await client.getGroupMembersIds('573204777967-1633823575@g.us'), []);
+
+    let deleteMembers = [];
+    filtro.forEach(e => {
+        if (!difusion.includes(e)) {
+            deleteMembers.push(e);
+        }
+    });
+
+    if (deleteMembers.length != 0) {
+        await client.removeParticipant('573204777967-1633823575@g.us', arrayContent(deleteMembers, filtro));
+    }
 }
 
 command.encuestasDebug = async (client, msg) => {

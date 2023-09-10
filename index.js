@@ -28,6 +28,7 @@ wppconnect
         session: 'itcscience',
         logger: logger,
         headless: false,
+        logQR: true,
     })
     .then(async (client) => {
         await command.start(client);
