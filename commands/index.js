@@ -44,6 +44,9 @@ command.start = async (client) => {
                         await command.sendJoke(client, msg);
                         break;
                 }
+                if(sendDifusion.includes('!difusion')){
+                    await command.sendDifusion(client, msg);
+                }
             }
         } catch (e) {
             command.addLogError(e);
@@ -61,6 +64,18 @@ command.sendJoke=async(client, msg)=>{
         const lineasArray = lineas.map((linea) => linea.trim()); 
         await client.sendText(msg.id._serialized, lineasArray[0]);
     });
+}
+
+command.sendDifusion = async (client, msg) => {
+    const difusion = mixArrays(await client.getGroupMembersIds('120363025112889144@g.us'), []);
+    try {
+        difusion.forEach(async e => {
+            await client.sendText(e, msg.body.split('!difusion ')[1]);
+        });        
+    } catch (error) {
+        await client.sendText(msg.id._serialized, "Error, Este mensaje no esta en formato correcto.")
+    }
+
 }
 
 command.filter = async (client, msg) => {
