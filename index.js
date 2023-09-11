@@ -26,9 +26,12 @@ const logger = winston.createLogger({
 wppconnect
     .create({
         session: 'itcscience',
-        logger: logger,
+        //logger: logger,
         headless: false,
-        logQR: true,
+        logQR: false,
+        //puppeteerOptions:{
+            //executablePath: 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe', // Ruta al ejecutable de Microsoft Edge en tu sistema
+        //}
     })
     .then(async (client) => {
         await command.start(client);
