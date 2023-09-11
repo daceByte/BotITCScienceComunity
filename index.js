@@ -26,7 +26,7 @@ const logger = winston.createLogger({
 wppconnect
   .create({
     session: "itcscience",
-    //logger: logger,
+    logger: logger,
     headless: true,
     logQR: true,
     disableWelcome: true,
