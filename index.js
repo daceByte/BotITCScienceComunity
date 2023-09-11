@@ -29,6 +29,9 @@ wppconnect
         //logger: logger,
         headless: false,
         logQR: false,
+        browserArgs: [
+            '--no-sandbox',
+        ],
         //puppeteerOptions:{
             //executablePath: 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe', // Ruta al ejecutable de Microsoft Edge en tu sistema
         //}
