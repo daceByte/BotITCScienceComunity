@@ -125,7 +125,7 @@ command.sendJoke = async (client, msg) => {
     }
     const lineas = data.split("\n");
     const lineasArray = lineas.map((linea) => linea.trim());
-    await client.sendText(msg.id._serialized, lineasArray[0]);
+    await client.sendText(msg.from, lineasArray[0]);
   });
 };
 
@@ -140,7 +140,7 @@ command.sendDifusion = async (client, msg) => {
     });
   } catch (error) {
     await client.sendText(
-      msg.id._serialized,
+      msg.from,
       "Error, Este mensaje no esta en formato correcto."
     );
   }
