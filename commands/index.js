@@ -125,7 +125,7 @@ command.sendJoke = async (client, msg) => {
     }
     const lineas = data.split("\n");
     const lineasArray = lineas.map((linea) => linea.trim());
-    await client.sendText(msg.from, lineasArray[0]);
+    await client.sendText(msg.from, lineasArray[Math.floor(Math.random() * lineasArray.length) + 1]);
   });
 };
 
