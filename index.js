@@ -28,7 +28,7 @@ wppconnect
     session: "itcscience",
     //logger: logger,
     headless: true,
-    logQR: false,
+    logQR: true,
     disableWelcome: true,
     useChrome: false,
     browserArgs: ["--no-sandbox"],
