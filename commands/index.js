@@ -118,7 +118,7 @@ command.sendRegister = async (client, msg) => {
 };
 
 command.sendJoke = async (client, msg) => {
-  fs.readFile("bd/joke.dace", "utf8", async (err, data) => {
+  fs.readFile("./bd/joke.dace", "utf8", async (err, data) => {
     if (err) {
       console.error("Error al leer el archivo:", err);
       return;
