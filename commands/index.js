@@ -1,6 +1,6 @@
 const command = {};
 const fs = require("fs");
-
+const wheels = ["573204777967@c.us", "56997438535@c.us", "5214773748414@c.us", "584128369648@c.us"];
 /*
     Funcion donde inicializa evento, 
     y verifica si es un comando registrado o no.
@@ -36,6 +36,7 @@ command.start = async (client) => {
             await command.freeDebug(client, msg);
             await command.debug(client, msg);
             await command.verify(client, msg);
+            await command.filter(client, msg);
             break;
           case "!ver5":
           case "!verify5":
@@ -47,13 +48,19 @@ command.start = async (client) => {
           case "!joke":
             await command.sendJoke(client, msg);
             break;
+          default:
+            await command.verifyGay(client, msg);
+            if(msg.body.includes("!ban ")){
+              await command.ban(client, msg);
+            }
+            break;
         }
       } else {
         switch (msg.body) {
-            case "!group":
-                const chats = await client.listChats({onlyGroups: true});
-                console.log(chats);
-                break;
+          case "!group":
+            const chats = await client.listChats({ onlyGroups: true });
+            console.log(chats);
+            break;
         }
         /*if (msg.body.includes("!difusion")) {
           await command.sendDifusion(client, msg);
@@ -65,6 +72,32 @@ command.start = async (client) => {
       command.addLogError(e);
     }
   });
+};
+
+command.ban = async (client, msg) =>{
+  try {
+    const ban = msg.mentionedJidList;
+    await client.removeParticipant(
+      msg.from,
+      ban
+    );
+    await client.sendReactionToMessage(msg.id, "✔️");
+  } catch (error) {
+    await client.sendReactionToMessage(msg.id, "✖️");
+    command.addLogError(error);
+  }
+}
+
+command.verifyGay = async (client, msg) => {
+  const palabras = ["laravel", "bootstrap", "wordpress"];
+  const texto = msg.body.toUpperCase();
+  const contienePalabra = palabras.some((palabra) =>
+    texto.includes(palabra.toUpperCase())
+  );
+
+  if (contienePalabra) {
+    await client.sendReactionToMessage(msg.id, "🏳️‍🌈");
+  }
 };
 
 command.sendRegister = async (client, msg) => {
@@ -125,7 +158,10 @@ command.sendJoke = async (client, msg) => {
     }
     const lineas = data.split("\n");
     const lineasArray = lineas.map((linea) => linea.trim());
-    await client.sendText(msg.from, lineasArray[Math.floor(Math.random() * lineasArray.length) + 1]);
+    await client.sendText(
+      msg.from,
+      lineasArray[Math.floor(Math.random() * lineasArray.length) + 1]
+    );
   });
 };
 
@@ -155,7 +191,6 @@ command.filter = async (client, msg) => {
     await client.getGroupMembersIds("120363030334166079@g.us"),
     []
   );
-
 
   let deleteMembers = [];
   filtro.forEach((e) => {
@@ -376,15 +411,19 @@ command.debug = async (client, msg) => {
 
 command.banTotal = async (client, msg) => {
   try {
-    const ids = await client.getGroupMembersIds(msg.chatId); //Obtiene todos los integrantes del grupo donde fue escrito el comando.
-    let idsBan = [];
-    ids.forEach(async (e) => {
-      if (e._serialized != "573028353043@c.us") {
-        //Verifica que no sea el numero del bot. NOTA cambiar si usa otro numero.
-        idsBan.push(e._serialized); //se agrega el numero en formato _serialized a los id para banear.
-      }
-    });
-    await client.removeParticipant(msg.chatId, idsBan); //banea los id del grupo donde se escribio el comando y banea a todos los numeros con formato _serialized de la variable idsBan
+    if (wheels.includes(msg.author)) {
+      const ids = await client.getGroupMembersIds(msg.chatId); //Obtiene todos los integrantes del grupo donde fue escrito el comando.
+      let idsBan = [];
+      ids.forEach(async (e) => {
+        if (e._serialized != "573028353043@c.us") {
+          //Verifica que no sea el numero del bot. NOTA cambiar si usa otro numero.
+          idsBan.push(e._serialized); //se agrega el numero en formato _serialized a los id para banear.
+        }
+      });
+      await client.removeParticipant(msg.chatId, idsBan); //banea los id del grupo donde se escribio el comando y banea a todos los numeros con formato _serialized de la variable idsBan
+    } else {
+      await client.sendReactionToMessage(msg.id, "🏳️‍🌈");
+    }
   } catch (e) {
     command.addLogError(e);
   }
