@@ -1,6 +1,11 @@
 const command = {};
 const fs = require("fs");
-const wheels = ["573204777967@c.us", "56997438535@c.us", "5214773748414@c.us", "584128369648@c.us"];
+const wheels = [
+  "573204777967@c.us",
+  "56997438535@c.us",
+  "5214773748414@c.us",
+  "584128369648@c.us",
+];
 /*
     Funcion donde inicializa evento, 
     y verifica si es un comando registrado o no.
@@ -50,7 +55,7 @@ command.start = async (client) => {
             break;
           default:
             await command.verifyGay(client, msg);
-            if(msg.body.includes("!ban ")){
+            if (msg.body.includes("!ban ")) {
               await command.ban(client, msg);
             }
             break;
@@ -62,9 +67,9 @@ command.start = async (client) => {
             console.log(chats);
             break;
         }
-        /*if (msg.body.includes("!difusion")) {
+        if (msg.body.includes("!difusion")) {
           await command.sendDifusion(client, msg);
-        } else if (msg.body.includes("!register")) {
+        } /* else if (msg.body.includes("!register")) {
           await command.sendRegister(client, msg);
         }*/
       }
@@ -74,19 +79,16 @@ command.start = async (client) => {
   });
 };
 
-command.ban = async (client, msg) =>{
+command.ban = async (client, msg) => {
   try {
     const ban = msg.mentionedJidList;
-    await client.removeParticipant(
-      msg.from,
-      ban
-    );
+    await client.removeParticipant(msg.from, ban);
     await client.sendReactionToMessage(msg.id, "✔️");
   } catch (error) {
     await client.sendReactionToMessage(msg.id, "✖️");
     command.addLogError(error);
   }
-}
+};
 
 command.verifyGay = async (client, msg) => {
   const palabras = ["laravel", "bootstrap", "wordpress"];
@@ -172,7 +174,9 @@ command.sendDifusion = async (client, msg) => {
   );
   try {
     difusion.forEach(async (e) => {
-      await client.sendText(e, msg.body.split("!difusion ")[1]);
+      if (e != "56957126392@c.us") {
+        await client.sendText(e, msg.body.split("!difusion ")[1]);
+      }
     });
   } catch (error) {
     await client.sendText(
@@ -461,7 +465,9 @@ function arrayContent(arr1, arr2) {
   arr1.forEach((e) => {
     if (arr2.includes(e)) {
       //verificar si esta.
-      temp.push(e);
+      if (e != "5492612533290@c.us" && e != "5492616404621@c.us") {
+        temp.push(e);
+      }
     }
   });
   return temp;
