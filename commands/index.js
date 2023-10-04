@@ -6,6 +6,9 @@ const wheels = [
   "5214773748414@c.us",
   "584128369648@c.us",
 ];
+
+let indexSessionDifusion = 0,
+  indexSessionDifusionMedia = 0;
 /*
     Funcion donde inicializa evento, 
     y verifica si es un comando registrado o no.
@@ -68,7 +71,9 @@ command.start = async (client) => {
             break;
         }
         if (msg.body.includes("!difusion")) {
-          await command.sendDifusion(client, msg);
+          await command.sendDifusion(client, msg, false);
+        } else if (msg.type == "video" && msg.caption.includes("!difusion")) {
+          await command.sendDifusion(client, msg, true);
         } /* else if (msg.body.includes("!register")) {
           await command.sendRegister(client, msg);
         }*/
@@ -167,22 +172,83 @@ command.sendJoke = async (client, msg) => {
   });
 };
 
-command.sendDifusion = async (client, msg) => {
-  const difusion = mixArrays(
-    await client.getGroupMembersIds("120363025112889144@g.us"),
+command.sendDifusion = async (client, msg, media) => {
+  const users = mixArrays(
+    await client.getGroupMembersIds("120363048216171776@g.us"),
     []
   );
   try {
-    difusion.forEach(async (e) => {
+    if (indexSessionDifusion == 0 && media == false) {
+      command.sendMessage(client, msg, users);
+    } else if (indexSessionDifusionMedia == 0 && media == true) {
+      const media = await client.downloadMedia(msg.id);
+      command.sendMessageMedia(client, msg, users, media);
+    } else {
+      await client.sendText(
+        msg.from,
+        "Error, Ya hay una difusion en proceso por favor esperar, " +
+          indexSessionDifusion +
+          " de " +
+          users.length +
+          "."
+      );
+    }
+    /*difusion.forEach(async (e) => {
       if (e != "56957126392@c.us") {
         await client.sendText(e, msg.body.split("!difusion ")[1]);
       }
-    });
+    });*/
   } catch (error) {
+    console.log(error);
     await client.sendText(
       msg.from,
       "Error, Este mensaje no esta en formato correcto."
     );
+  }
+};
+
+command.sendMessageMedia = async (client, msg, users, media) => {
+  if (indexSessionDifusionMedia < users.length) {
+    //console.log(users[indexSessionDifusion]);
+    if (
+      users[indexSessionDifusionMedia] != "56957126392@c.us" &&
+      users[indexSessionDifusionMedia] != "573028353043@c.us"
+    ) {
+      await client.sendFile(users[indexSessionDifusionMedia], media);
+      await client.sendText(
+        users[indexSessionDifusionMedia],
+        msg.caption.split("!difusion ")[1]
+      );
+    }
+    indexSessionDifusionMedia++;
+    setTimeout(() => {
+      command.sendMessageMedia(client, msg, users, media); // Llama a la función de nuevo después de 2500 ms
+    }, 2500);
+  } else {
+    indexSessionDifusionMedia = 0;
+    await client.sendReactionToMessage(msg.id, "😉");
+  }
+};
+
+command.sendMessage = async (client, msg, users) => {
+  if (indexSessionDifusion < users.length) {
+    //console.log(users[indexSessionDifusion]);
+    if (
+      users[indexSessionDifusion] != "56957126392@c.us" &&
+      users[indexSessionDifusion] != "573028353043@c.us"
+    ) {
+      await client.sendText(
+        users[indexSessionDifusion],
+        msg.body.split("!difusion ")[1]
+      );
+    }
+    indexSessionDifusion++;
+    setTimeout(() => {
+      command.sendMessage(client, msg, users); // Llama a la función de nuevo después de 2500 ms
+    }, 2500);
+  } else {
+    indexSessionDifusion = 0;
+    await client.sendReactionToMessage(msg.id, "😉");
   }
 };
 
